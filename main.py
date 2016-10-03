@@ -1,5 +1,3 @@
-# Testing Git Push
-
 '''
 API:                        http://exoplanetarchive.ipac.caltech.edu/docs/program_interfaces.html#data
 Pre-generate API Queries:   http://exoplanetarchive.ipac.caltech.edu/docs/API_queries.html
