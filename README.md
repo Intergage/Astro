@@ -14,7 +14,7 @@ Example:<br>
     
 #### Arugments
 `  
-  -h, --help            
+  -h, --help<br>            
 			show this help message and exit
   --pre-defined PRE_DEFINED
                         Pre-defined search queries
