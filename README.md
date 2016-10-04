@@ -13,7 +13,7 @@ Example:<br>
     
     
 #### Arugments
-```bash
+```
   -h, --help
             			show this help message and exit
   --pre-defined PRE_DEFINED
