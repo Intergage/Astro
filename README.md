@@ -13,9 +13,10 @@ Example:<br>
     
     
 #### Arugments
-`main.py [-h] [--pre-defined PRE_DEFINED] [--write-own WRITE_OWN]<br>
-&nbsp;&nbsp;-h, --help >> Show this help message and exit<br>
-&nbsp;&nbsp;--pre-defined PRE_DEFINED &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  Pre-defined search queries<br>
-&nbsp;&nbsp;--write-own WRITE_OWN &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  Write your own search query<br>
-&nbsp;&nbsp;--advanced-q ADVANCED_QUERY &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  Create your own with no help 
-\<Typing a URL\><br>` 
+``` 
+  -h, --help            show this help message and exit
+  --pre-defined PRE_DEFINED
+                        Pre-defined search queries
+  --write-own WRITE_OWN
+                        Write your own query
+```
