@@ -13,9 +13,9 @@ Example:<br>
     
     
 #### Arugments
-```  -h, --help            show this help message and exit
+`  -h, --help            show this help message and exit
   --pre-defined PRE_DEFINED
                         Pre-defined search queries
   --write-own WRITE_OWN
                         Write your own query
-```
+`
