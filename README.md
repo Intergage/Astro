@@ -2,10 +2,10 @@
 ##Random API Search tool thingo. 
 
 #### API Used: http://exoplanetarchive.ipac.caltech.edu
-#API:                        http://exoplanetarchive.ipac.caltech.edu/docs/program_interfaces.html#data<br>
-#Pre-generate API Queries:   http://exoplanetarchive.ipac.caltech.edu/docs/API_queries.html<br>
-#Format control:             &format=JSON
-#Get Columns for table:      table=exoplanets&getDefaultColumns
+#####API:                        http://exoplanetarchive.ipac.caltech.edu/docs/program_interfaces.html#data<br>
+#####Pre-generate API Queries:   http://exoplanetarchive.ipac.caltech.edu/docs/API_queries.html<br>
+#####Format control:             &format=JSON
+#####Get Columns for table:      table=exoplanets&getDefaultColumns
 
 
 Example:
