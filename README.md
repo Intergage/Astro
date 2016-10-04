@@ -11,7 +11,7 @@
     \<Standard URL\>nph-nstedAPI?table=\<TABLENAME\>&select=\<COLUMN NAMES,CAN HAVE MANY\><br>
     
     
-#### Arugments
+#### Arguments
 ```
   -h, --help HELP
             			show this help message and exit
@@ -20,3 +20,12 @@
   --write-own WRITE_OWN
                         Write your own query
 ```
+
+
+#### Argument Table
+| Switch	| Use	|
+|---		|---	|
+|-h		|Show the help message|
+|--pre-defined	|Pre-defeined search queries|
+|--write-own	|Write your own query using a wizard|
+|--write-adv	|Write your own query as a string|
