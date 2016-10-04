@@ -9,7 +9,7 @@ Get Columns for table:      table=exoplanets&getDefaultColumns<br>
 
 
 Example:<br>
-    <Standard URL>nph-nstedAPI?table=<TABLENAME>&select=<COLUMN NAMES,CAN HAVE MANY><br>
+    \<Standard URL\>nph-nstedAPI?table=\<TABLENAME\>&select=\<COLUMN NAMES,CAN HAVE MANY\><br>
     
     
 #### Arugments
