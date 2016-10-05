@@ -18,30 +18,26 @@ print(raw_data)
 
 '''
 
-import numpy as np
-import pandas as pd
-import datetime
-import urllib
 import sys
-import argparse
-import modules
 
+import modules
+import argparse
 '''
 parser = argparse.ArgumentParser(description='Astro API Search')
 parser.add_argument('--pre-defined', help='Pre-defined search queries')
 parser.add_argument('--write-own', help='Write your own query')
-
 args = parser.parse_args()
 '''
 
-table_lists = [('Confirmed Planets', ['exoplanets', 'multiexopars']), ('KOI (Cumulative)', ['cumulative', 'q1_q17_dr24_koi', 'q1_q16_koi', 'q1_q12_koi', 'q1_q8_koi', 'q1_q6_koi']),
-               ('Threshold-Crossing Events (TCEs)', ['q1_q17_dr25_tce', 'q1_q17_dr24_tce', 'q1_q16_tce', 'q1_q12_tce'])]
-
-
-print('''
+intro = '''
 Welcome to the Exo-planet Archive API search
   http://exoplanetarchive.ipac.caltech.edu
-''')
+'''
+
+arg_help = [('Pre-defined Queries: ', ['[--pre-defined]', 'A list of queries taken from http://exoplanetarchive.ipac.caltech.edu/docs/API_queries.html']),
+            ('Build your own query: ', ['[--write-own]', 'Use a \'wizard\' style module to help create queries']),
+            ('Write advanced query: ', ['[--write-adv]', 'A prompt that will allow you to write your own query from scratch. MUST KNOW API SYNTAX'])]
+
 def main():
     MENU = '''
     1. Pre-defined search queries
@@ -62,72 +58,8 @@ def main():
                 print('')
                 modules.preDefined()
             elif menuChoice == '2':
-                print('''
-                     Build your own query
-----------------------------------------------------------------------------
-           For all table, column and data names please see
-http://exoplanetarchive.ipac.caltech.edu/docs/program_interfaces.html#data
-
-        I have tried to make it as easy as I can to create
-        your own query without learning the correct syntax
-
-        Tables are split into categories for ease of use.
-        Please select what category you'd like to explore.\n\n
-                ''')
-                temp = []
-                for x, y in table_lists:
-                    temp.append(x)
-
-                for i, name in enumerate(temp):
-                    print(i, '-', "{0:20}".format(name), end='\n' if i%10==4 else ' ')
-                print('\n')
-
-                category = input('Category? _> ')
-                print('\n')
-
-                print('*'*40, 'TABLE NAMES', '*'*40, '\n')
-                for i, name in enumerate(table_lists[int(category)][1]):
-                    print("{0:20}".format(name), end='\n' if i%10==4 else ' ')
-                print('\n')
-                print('*'*93, '\n')
-
-                table = input('Table? _> ')
-
-                print('Gathering table columns')
-                modules.getColumns(table)
-
-                print('''
-        These are the columns for the selected table
-        You need to select what columns to return
-        You can select a single column or multiple
-        Separate them with a comma(,)
-                ''')
-
-                column = input('Column(s)? _> ')
-
-                print('''
-        Now we can set arguments for our query.
-        You will need to know basic SQL (SoQL(?))
-            http://exoplanetarchive.ipac.caltech.edu/docs/program_interfaces.html#syntax
-                ''')
-
-                # TODO Find some way only add 'select', 'where', etc unless the user really wants to. EG: table=cumulative&select=kepid&where=* wont work but table=cumulative&select=kepid will.
-                choice = input('Write Arguments? y/n_> ')
-                if choice.lower() == 'y':
-                    argz = input('Arguments _> ')
-                    url = 'http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?table=' + table + '&select=' + column + '&where=' + argz + '&format=JSON'
-                    data = modules.querySend(url)
-                    print(data)
-                elif choice.lower() == 'n':
-                    print('Returning all data from selected columns')
-                    url = 'http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?table=' + table + '&select=' + column + '&format=JSON'
-                    data = modules.querySend(url)
-                    print('Query Used: ' + url + '\n')
-                    print(data)
-                else:
-                    print('Input not valid')
-
-
+                print('')
+                modules.writeOwn()
             elif menuChoice == 'q'.lower():
                 print('Bye')
                 break
@@ -135,13 +67,20 @@ http://exoplanetarchive.ipac.caltech.edu/docs/program_interfaces.html#data
         except IndexError:
             print('Unknown Option %s' % menuChoice)
 
-
 if __name__ == '__main__':
     try:
         if sys.argv[1] == '--pre-defined':
+            print(intro)
             modules.preDefined()
+        elif sys.argv[1].lower() == '-h' or sys.argv[1].lower() == '-help':
+            for arg_name, arg_options in arg_help:
+                print('\t', arg_name, arg_options[0], '\n\t\t', arg_options[1], '\n')
         elif sys.argv[1] == '--write-own':
-            print('DO THIS - Modulate Write own?')
+            print(intro)
+            modules.writeOwn()
+        elif sys.argv[1] == '--write-adv':
+            print(intro)
+            modules.writeAdv()
         else:
             print('Unknown Arg')
     except:

@@ -1,7 +1,17 @@
 import pandas as pd
 from urllib.request import urlopen
+from urllib.parse import urlparse, parse_qs
+import re
 
-from collections import OrderedDict
+table_lists = [('Confirmed Planets', ['exoplanets', 'multiexopars']),
+               ('KOI (Cumulative)', ['cumulative', 'q1_q17_dr24_koi', 'q1_q16_koi', 'q1_q12_koi', 'q1_q8_koi', 'q1_q6_koi']),
+               ('Threshold-Crossing Events', ['q1_q17_dr25_tce', 'q1_q17_dr24_tce', 'q1_q16_tce', 'q1_q12_tce']),
+               ('K-Stellar Properties', ['keplerstellar', 'q1_q17_dr25_stellar', 'q1_q17_dr24_stellar', 'q1_q16_stellar', 'q1_q12_stellar', 'keplertimeseries', 'keplernames']),
+               ('KELT Time Series', ['kelttimeseries', 'EG: &kelt_field=N02']),
+               ('SuperWASP Time Series', ['superwasptimeseries', 'EG: &tile=tile168060  OR  &sourceid=1SWASP J191645.46+474912.3']),
+               ('K2', ['k2targets', 'k2candidates', 'k2names']),
+               ('Mission Stars', ['missionstars', 'mission_exocat'])]
+
 
 def preDefined():
     print('Pre-defined search queries from caltech.edu\n')
@@ -71,6 +81,99 @@ def preDefined():
 
         except IndexError:
             print('Unknown Option %s' % choice)
+
+def writeOwn():
+    print('''
+                         Build your own query
+    ----------------------------------------------------------------------------
+               For all table, column and data names please see
+    http://exoplanetarchive.ipac.caltech.edu/docs/program_interfaces.html#data
+
+            I have tried to make it as easy as I can to create
+            your own query without learning the correct syntax
+
+            Tables are split into categories for ease of use.
+            Please select what category you'd like to explore.\n\n
+                    ''')
+    temp = []
+    for x, y in table_lists:
+        temp.append(x)
+
+    for i, name in enumerate(temp):
+        print(i, '-', "{0:30}".format(name), end='\n' if i % 10 == 4 else ' ')
+    print('\n')
+
+    category = input('Category? _> ')
+    print('\n')
+
+    print('*' * 40, 'TABLE NAMES', '*' * 40, '\n')
+    for i, name in enumerate(table_lists[int(category)][1]):
+        print("{0:30}".format(name), end='\n' if i % 10 == 4 else ' ')
+    print('\n')
+    print('*' * 93, '\n')
+
+    table = input('Table? _> ')
+
+    print('Gathering table columns')
+    getColumns(table)
+
+    print('''
+    These are the columns for the selected table
+    You need to select what columns to return
+    You can select a single column or multiple
+    Separate them with a comma(,)
+                    ''')
+
+    column = input('Column(s)? _> ')
+
+    print('''
+            Now we can set arguments for our query.
+            You will need to know basic SQL (SoQL(?))
+http://exoplanetarchive.ipac.caltech.edu/docs/program_interfaces.html#syntax
+                    ''')
+
+    # TODO Find some way only add 'select', 'where', etc unless the user really wants to. EG: table=cumulative&select=kepid&where=* wont work but table=cumulative&select=kepid will.
+    choice = input('Write Arguments? y/n_> ')
+    if choice.lower() == 'y':
+        argz = input('Arguments _> ')
+        url = 'http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?table=' + table + '&select=' + column + '&where=' + argz + '&format=JSON'
+        data = querySend(url)
+        print(data)
+    elif choice.lower() == 'n':
+        print('Returning all data from selected columns')
+        url = 'http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?table=' + table + '&select=' + column + '&format=JSON'
+        data = querySend(url)
+        print('Query Used: ' + url + '\n')
+        print(data)
+    else:
+        print('Input not valid')
+
+def writeAdv():
+    print('''
+        For all information on how to write a basic query please see
+http://exoplanetarchive.ipac.caltech.edu/docs/program_interfaces.html#build
+    ''')
+    base_url = 'http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?'
+    query = input('_> ')
+    url = base_url + query
+
+    query = parse_qs(query)
+
+    columns = query.get('select')
+    table = query.get('table')
+    order = query.get('order')
+    fmat = query.get('format')
+
+    print('''
+    Query:
+        Table       =   %s
+        Columns     =   %s
+        Order       =   %s
+        Format      =   %s
+    ''' % (table, columns, order, fmat))
+
+    data = querySend(url)
+    print(data)
 
 def querySend(url):
     pd.set_option('max_columns', 10)
