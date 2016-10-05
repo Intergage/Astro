@@ -19,17 +19,9 @@ print(raw_data)
 '''
 
 import sys
-
 import modules
-import argparse
-'''
-parser = argparse.ArgumentParser(description='Astro API Search')
-parser.add_argument('--pre-defined', help='Pre-defined search queries')
-parser.add_argument('--write-own', help='Write your own query')
-args = parser.parse_args()
-'''
 
-intro = '''
+INTRO = '''
 Welcome to the Exo-planet Archive API search
   http://exoplanetarchive.ipac.caltech.edu
 '''
@@ -70,16 +62,16 @@ def main():
 if __name__ == '__main__':
     try:
         if sys.argv[1] == '--pre-defined':
-            print(intro)
+            print(INTRO)
             modules.preDefined()
         elif sys.argv[1].lower() == '-h' or sys.argv[1].lower() == '-help':
             for arg_name, arg_options in arg_help:
                 print('\t', arg_name, arg_options[0], '\n\t\t', arg_options[1], '\n')
         elif sys.argv[1] == '--write-own':
-            print(intro)
+            print(INTRO)
             modules.writeOwn()
         elif sys.argv[1] == '--write-adv':
-            print(intro)
+            print(INTRO)
             modules.writeAdv()
         else:
             print('Unknown Arg')
