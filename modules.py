@@ -84,7 +84,7 @@ def preDefined():
 
 def writeOwn():
     print('''
-                         Build your own query
+                                    QWizard
     ----------------------------------------------------------------------------
                For all table, column and data names please see
     http://exoplanetarchive.ipac.caltech.edu/docs/program_interfaces.html#data
@@ -99,9 +99,11 @@ def writeOwn():
     for x, y in table_lists:
         temp.append(x)
 
+    print('*' * 40, ' CATEGORY ', '*' * 40, '\n')
     for i, name in enumerate(temp):
         print(i, '-', "{0:30}".format(name), end='\n' if i % 10 == 4 else ' ')
     print('\n')
+    print('*' * 93, '\n')
 
     category = input('Category? _> ')
     print('\n')
@@ -185,5 +187,13 @@ def getColumns(table):
     col_names = urlopen(url).read().decode('utf8')
     col_names = col_names.split(',')
     # Thanks nedbat. I really am not sure what is going on here. I can only guess.
+    print('\n')
+    print('*' * 40, ' COLU NAMES ', '*' * 40, '\n')
     for i, name in enumerate(col_names):
         print("{0:20}".format(name), end='\n' if i%10==4 else ' ')
+    print('\n')
+    print('*' * 93, '\n')
+
+
+def prompt():
+    inpt = input('_> ')
