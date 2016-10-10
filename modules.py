@@ -16,71 +16,35 @@ table_lists = [('Confirmed Planets', ['exoplanets', 'multiexopars']),
 def preDefined():
     print('Pre-defined search queries from caltech.edu\n')
     while True:
-        MENU = {1: 'All confirmed planets and columns',
-                2: 'Confirmed planets in the Kepler field (default columns)',
-                3: 'Stars known to host exoplanets listed in ascending order',
-                4: 'Confirmed planets that transit their host stars (default columns)',
-                5: 'A current list of non-confirmed planet candidates',
-                6: 'K2 targets from campaign 9',
-                7: 'Confirmed planets in the Mission Star list',
-                8: 'All default parameters for one particular KOI or another',
-                9: 'All microlensing planets with time series',
-                10: 'All planetary candidates smaller than 2Re with equilibrium temperatures between 180-303K'}
+        # If I want to add the old "Query Used: <Query>" line before the result is printed
+        # Change the values to lists and add the string as index 2.
+        # Index below as needed.
+        MENU = {
+            1: ('All confirmed planets and columns', 'http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?&table=exoplanets&where=*&format=JSON'),
+            2: ('Confirmed planets in the Kepler field (default columns)', 'http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?&table=exoplanets&format=JSON&where=pl_kepflag=1'),
+            3: ('Stars known to host exoplanets listed in ascending order', 'http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?&table=exoplanets&select=distinct%20pl_hostname&order=pl_hostname&format=JSON'),
+            4: ('Confirmed planets that transit their host stars (default columns)', 'http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?&table=exoplanets&format=JSON&where=pl_tranflag=1'),
+            5: ('A current list of non-confirmed planet candidates', "http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?&table=cumulative&format=JSON&where=koi_disposition%20like%20'CANDIDATE'"),
+            6: ('K2 targets from campaign 9', 'http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?&table=k2targets&format=JSON&where=k2_campaign=9'),
+            7: ('Confirmed planets in the Mission Star list', 'http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?&table=missionstars&format=JSON&where=st_ppnum>0'),
+            8: ('All default parameters for one particular KOI or another', 'http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?&table=koi&format=JSON&where=kepoi_name=\'K00007.01\' OR kepoi_name=\'K00742.01\''),
+            9: ('All microlensing planets with time series', "http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?&table=exoplanets&format=JSON&where=pl_discmethod%20like%20'Microlensing'%20and%20st_nts>0"),
+            10: ('All planetary candidates smaller than 2Re with equilibrium temperatures between 180-303K', "http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?table=cumulative&where=koi_prad<2%20and%20koi_teq>180%20and%20koi_teq<303%20and%20koi_disposition%20like%20'CANDIDATE'&format=JSON"),
+            0: ('Main Menu', None)
+        }
+
 
         options = sorted(MENU.keys())
         for opt in options:
-            print(opt, '\t', MENU[opt])
-        print('\n')
+            print('\t', opt, '\t', MENU[opt][0])
 
         choice = input('_> ')
-        print('\n')
+        if choice == '0':
+            break
+        else:
+            result = querySend(MENU.get(int(choice))[1])
+            print(result, '\n')
 
-        try:
-            if choice == '1':
-                print('Query Used: table=exoplanets&where=*&format=JSON \n')
-                result = querySend('http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?&table=exoplanets&where=*&format=JSON')
-                print(result, '\n')
-            elif choice == '2':
-                print('Query Used: table=exoplanets&format=JSON&where=pl_kepflag=1 \n')
-                result = querySend('http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?&table=exoplanets&format=JSON&where=pl_kepflag=1')
-                print(result, '\n')
-            elif choice == '3':
-                print('Query Used: exoplanets&select=distinct%20pl_hostname&order=pl_hostname&format=JSON')
-                result = querySend('http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?&table=exoplanets&select=distinct%20pl_hostname&order=pl_hostname&format=JSON')
-                print(result, '\n')
-            elif choice == '4':
-                print('Query Used: table=exoplanets&format=JSON&where=pl_tranflag=1')
-                result = querySend('http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?&table=exoplanets&format=JSON&where=pl_tranflag=1')
-                print(result, '\n')
-            elif choice == '5':
-                print('Query Used: table=cumulative&format=JSON&where=koi_disposition%20like%20\'CANDIDATE\'')
-                result = querySend("http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?&table=cumulative&format=JSON&where=koi_disposition%20like%20'CANDIDATE'")
-                print(result, '\n')
-            elif choice == '6':
-                print('Query Used: table=k2targets&format=JSON&where=k2_campaign=9')
-                result = querySend('http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?&table=k2targets&format=JSON&where=k2_campaign=9')
-                print(result, '\n')
-            elif choice == '7':
-                print('Query Used: table=missionstars&format=JSON&where=st_ppnum>0')
-                result = querySend('http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?&table=missionstars&format=JSON&where=st_ppnum>0')
-                print(result, '\n')
-            elif choice == '8':
-                print('Query Used: table=koi&format=JSON&where=kepoi_name=\'K00007.01\' OR kepoi_name=\'K00742.01\'')
-                result = querySend('http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?&table=koi&format=JSON&where=kepoi_name=\'K00007.01\' OR kepoi_name=\'K00742.01\'')
-                print(result, '\n')
-            elif choice == '9':
-                print('Query Used: table=exoplanets&format=JSON&where=pl_discmethod%20like%20\'Microlensing\'%20and%20st_nts>0')
-                result = querySend("http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?&table=exoplanets&format=JSON&where=pl_discmethod%20like%20'Microlensing'%20and%20st_nts>0")
-                print(result, '\n')
-            elif choice == '10':
-                print('Query Used: table=cumulative&where=koi_prad<2%20and%20koi_teq>180%20and%20koi_teq<303%20and%20koi_disposition%20like%20\'CANDIDATE\'&format=JSON')
-                result = querySend("http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?table=cumulative&where=koi_prad<2%20and%20koi_teq>180%20and%20koi_teq<303%20and%20koi_disposition%20like%20'CANDIDATE'&format=JSON")
-                print(result, '\n')
-            elif choice.lower() == 'b' or choice == 'back':
-                break
-
-        except IndexError:
-            print('Unknown Option %s' % choice)
 
 def writeOwn():
     print('''
@@ -106,13 +70,20 @@ def writeOwn():
     print('*' * 93, '\n')
 
     category = input('Category? _> ')
-    print('\n')
 
     print('*' * 40, 'TABLE NAMES', '*' * 40, '\n')
     for i, name in enumerate(table_lists[int(category)][1]):
         print("{0:30}".format(name), end='\n' if i % 10 == 4 else ' ')
     print('\n')
     print('*' * 93, '\n')
+
+    print('''
+    Now you need to select a table
+    Each table holds certain data
+    Use the URL in module description
+    To see what each table offers
+    ''')
+
 
     table = input('Table? _> ')
 
@@ -129,9 +100,9 @@ def writeOwn():
     column = input('Column(s)? _> ')
 
     print('''
-            Now we can set arguments for our query.
-            You will need to know basic SQL (SoQL(?))
-http://exoplanetarchive.ipac.caltech.edu/docs/program_interfaces.html#syntax
+    Now we can set arguments for your query.
+    You will need to know basic SQL (SoQL(?))
+    http://exoplanetarchive.ipac.caltech.edu/docs/program_interfaces.html#syntax
                     ''')
 
     # TODO Find some way only add 'select', 'where', etc unless the user really wants to. EG: table=cumulative&select=kepid&where=* wont work but table=cumulative&select=kepid will.
@@ -150,37 +121,44 @@ http://exoplanetarchive.ipac.caltech.edu/docs/program_interfaces.html#syntax
     else:
         print('Input not valid')
 
+
 def writeAdv():
     print('''
         For all information on how to write a basic query please see
 http://exoplanetarchive.ipac.caltech.edu/docs/program_interfaces.html#build
+                        b or back for Main Menu
     ''')
     base_url = 'http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?'
     query = input('_> ')
-    url = base_url + query
+    if query.lower() == 'b' or query.lower() == 'back':
+        return
+    else:
+        url = base_url + query
 
-    query = parse_qs(query)
+        query = parse_qs(query)
 
-    columns = query.get('select')
-    table = query.get('table')
-    order = query.get('order')
-    fmat = query.get('format')
+        columns = query.get('select')
+        table = query.get('table')
+        order = query.get('order')
+        fmat = query.get('format')
 
-    print('''
-    Query:
-        Table       =   %s
-        Columns     =   %s
-        Order       =   %s
-        Format      =   %s
-    ''' % (table, columns, order, fmat))
+        print('''
+        Query:
+              Table   =   %s
+            Columns   =   %s
+              Order   =   %s
+             Format   =   %s
+        ''' % (table, columns, order, fmat))
 
-    data = querySend(url)
-    print(data)
+        data = querySend(url)
+        print(data)
+
 
 def querySend(url):
     pd.set_option('max_columns', 10)
     raw_data = pd.read_json(url)
     return raw_data
+
 
 def getColumns(table):
     url = 'http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?table=' + table + '&getDefaultColumns&format=csv'
