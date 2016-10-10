@@ -1,23 +1,22 @@
 import click
 
 @click.group()
-def main():
+def click_grp():
     pass
 
-@main.command()
-def tits():
-    click.echo('Tits')
+@click_grp.command(name='-b')
+@click.option('--table', type=(str))
+@click.option('--column', type=(str))
+@click.option('--con', type=(str))
+def basic(table, column, con):
+    print('''
+    Basic:-
+        Table:      %s
+      Columns:      %s
+    Condition:      %s
+    ''' % (table, column, con))
 
-@main.command()
-def dicks():
-    print('dicks')
-
-
-main()
-
-
-
-
+click_grp()
 
 
 '''
