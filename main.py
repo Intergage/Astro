@@ -27,53 +27,28 @@ Welcome to the Exo-planet Archive API search
   http://exoplanetarchive.ipac.caltech.edu
 '''
 
-@click.group()
-def click_grp():
-    print(click_grp.command)
-
-
 def main():
-    MENU = '''
-    1. Pre-defined search queries
-    2. QWizard
-    3. Advanced query
-    '''
 
     while True:
+        MENU = '''
+        1. Pre-defined search queries
+        2. QWizard
+        3. Advanced query
+        q. Quit
+        '''
+
+        MENU_d = {
+            '1': modules.preDefined,
+            '2': modules.writeOwn,
+            '3': modules.writeAdv,
+            'q': exit
+        }
+
         print(MENU)
-        try:
-            menuChoice = input('_> ')
-            if menuChoice == '1':
-                print('')
-                modules.preDefined()
-            elif menuChoice == '2':
-                print('')
-                modules.writeOwn()
-            elif menuChoice == '3':
-                print('')
-                modules.writeAdv()
-            elif menuChoice == 'q'.lower():
-                print('Bye')
-                break
 
-        except IndexError:
-            print('Unknown Option %s' % menuChoice)
-
-@click_grp.command()
-def write_own():
-    #print('DEBUG: write_own')
-    modules.writeAdv()
-
-@click_grp.command()
-def qwizard():
-    #print('DEBUG: qwizard')
-    modules.writeOwn()
-
-@click_grp.command()
-def pre_defined():
-    #print('DEBUG: pre_defined')
-    modules.preDefined()
+        func = input('_> ')
+        MENU_d.get(func)()
 
 
-
-click_grp()
+print(INTRO)
+main()
