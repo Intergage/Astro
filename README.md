@@ -9,12 +9,3 @@
 
 **Example:<br>**
    *\<Standard URL\>nph-nstedAPI?table=\<TABLENAME\>&select=\<COLUMN NAMES,CAN HAVE MANY\>*<br>
-    
-    
-#### Arguments Table
-| Switch	| Use	|
-|---		|---	|
-|-h		|Show the help message|
-|--pre-defined	|Pre-defeined search queries|
-|--write-own	|Write your own query using a wizard|
-|--write-adv	|Write your own query as a string|
