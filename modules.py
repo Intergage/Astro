@@ -1,7 +1,7 @@
 import pandas as pd
 from urllib.request import urlopen
 from urllib.parse import urlparse, parse_qs
-import re
+from prettytable import PrettyTable
 
 table_lists = [('Confirmed Planets', ['exoplanets', 'multiexopars']),
                ('KOI (Cumulative)', ['cumulative', 'q1_q17_dr24_koi', 'q1_q16_koi', 'q1_q12_koi', 'q1_q8_koi', 'q1_q6_koi']),
@@ -33,11 +33,9 @@ def preDefined():
             0: ('Main Menu', None)
         }
 
-
         options = sorted(MENU.keys())
         for opt in options:
             print('\t', opt, '\t', MENU[opt][0])
-
         choice = input('_> ')
         if choice == '0':
             break
@@ -59,60 +57,62 @@ def writeOwn():
             Tables are split into categories for ease of use.
             Please select what category you'd like to explore.\n\n
                     ''')
-    temp = []
+    # Print out Categories in a table format
+    table_frame = PrettyTable(['#', 'Category'])
+    i = 0
     for x, y in table_lists:
-        temp.append(x)
-
-    print('*' * 40, ' CATEGORY ', '*' * 40, '\n')
-    for i, name in enumerate(temp):
-        print(i, '-', "{0:30}".format(name), end='\n' if i % 10 == 4 else ' ')
-    print('\n')
-    print('*' * 93, '\n')
+        table_frame.add_row([i, x])
+        i += 1
+    print(table_frame, '\n')
 
     category = input('Category? _> ')
 
-    print('*' * 40, 'TABLE NAMES', '*' * 40, '\n')
-    for i, name in enumerate(table_lists[int(category)][1]):
-        print("{0:30}".format(name), end='\n' if i % 10 == 4 else ' ')
-    print('\n')
-    print('*' * 93, '\n')
+    # Prints out Tables from selected category
+    col_frame = PrettyTable(['', 'Tables'])
+    i = 0
+    for x in table_lists[int(category)][1]:
+        col_frame.add_row(['', x])
+        i += 1
+    print(col_frame)
 
+    # Select table
     print('''
     Now you need to select a table
     Each table holds certain data
     Use the URL in module description
     To see what each table offers
     ''')
-
-
     table = input('Table? _> ')
 
+    # Gets Table columns from API
     print('Gathering table columns')
     getColumns(table)
 
+    # Select what coloumns you want to grab data from
     print('''
     These are the columns for the selected table
     You need to select what columns to return
     You can select a single column or multiple
     Separate them with a comma(,)
-                    ''')
-
+    ''')
     column = input('Column(s)? _> ')
 
+    # Check if user wants arguments in the query
     print('''
     Now we can set arguments for your query.
     You will need to know basic SQL (SoQL(?))
     http://exoplanetarchive.ipac.caltech.edu/docs/program_interfaces.html#syntax
                     ''')
-
-    # TODO Find some way only add 'select', 'where', etc unless the user really wants to. EG: table=cumulative&select=kepid&where=* wont work but table=cumulative&select=kepid will.
     choice = input('Write Arguments? y/n_> ')
+
     if choice.lower() == 'y':
+        # If yes, take argument string and build URL. Send to querySend()
         argz = input('Arguments _> ')
         url = 'http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?table=' + table + '&select=' + column + '&where=' + argz + '&format=JSON'
         data = querySend(url)
         print(data)
     elif choice.lower() == 'n':
+        # If no, return all data from table and columns selected.
         print('Returning all data from selected columns')
         url = 'http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?table=' + table + '&select=' + column + '&format=JSON'
         data = querySend(url)
@@ -164,14 +164,43 @@ def getColumns(table):
     url = 'http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?table=' + table + '&getDefaultColumns&format=csv'
     col_names = urlopen(url).read().decode('utf8')
     col_names = col_names.split(',')
-    # Thanks nedbat. I really am not sure what is going on here. I can only guess.
-    print('\n')
-    print('*' * 40, ' COLU NAMES ', '*' * 40, '\n')
-    for i, name in enumerate(col_names):
-        print("{0:20}".format(name), end='\n' if i%10==4 else ' ')
-    print('\n')
-    print('*' * 93, '\n')
+
+    pl_list = []
+    st_list = []
+    ot_list = []
+
+    for name in col_names:
+        if 'pl_' in name:
+            pl_list.append(name)
+        elif 'st_' in name:
+            st_list.append(name)
+        elif name:
+            ot_list.append(name)
+
+    longest_col = max(len(pl_list), len(st_list), len(ot_list))
+
+    def data_append(l, list_len):
+        for idx in range(list_len):
+            try:
+                l[idx]
+            except:
+                l.append('')
+
+    #[data_append(_, longest_col) for _ in (pl_list, st_list, ot_list)]
+
+    data_append(pl_list, longest_col)
+    data_append(st_list, longest_col)
+    data_append(ot_list, longest_col)
+
+    col_frame = PrettyTable()
+    col_frame.add_column('PL', pl_list, 'l')
+    col_frame.add_column('ST', st_list, 'l')
+    col_frame.add_column('Oth', ot_list, 'l')
+
+    print(col_frame)
 
 
 def prompt():
     inpt = input('_> ')
+
+print(table_lists)
