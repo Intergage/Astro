@@ -2,6 +2,7 @@ import pandas as pd
 from urllib.request import urlopen
 from urllib.parse import urlparse, parse_qs
 from prettytable import PrettyTable
+import json
 
 table_lists = [('Confirmed Planets', ['exoplanets', 'multiexopars']),
                ('KOI (Cumulative)', ['cumulative', 'q1_q17_dr24_koi', 'q1_q16_koi', 'q1_q12_koi', 'q1_q8_koi', 'q1_q6_koi']),
@@ -155,13 +156,12 @@ http://exoplanetarchive.ipac.caltech.edu/docs/program_interfaces.html#build
 
 
 def querySend(url):
-    pd.set_option('max_columns', 10)
     raw_data = pd.read_json(url)
     return raw_data
 
 
 def getColumns(table):
-    url = 'http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?table=' + table + '&getDefaultColumns&format=csv'
+    url = 'http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?table=' + table + '&getAllColumns&format=csv'
     col_names = urlopen(url).read().decode('utf8')
     col_names = col_names.split(',')
 
@@ -199,8 +199,38 @@ def getColumns(table):
 
     print(col_frame)
 
+def planetOverview():
+    print('''
+            Planet Overview
+    Show basic planet information
+          Enter a planet name.
+    ''')
 
-def prompt():
-    inpt = input('_> ')
+    planet = input('_> ')
+    url = "http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?&table=exoplanets&select=pl_hostname,pl_letter,pl_discmethod,pl_orbper,pl_orbsmax,pl_orbincl,pl_bmassj,pl_radj,pl_dens,ra,dec&where=pl_name%20like%20'" + planet + "'&format=json"
+    url = url.replace(' ', '%20')
 
-print(table_lists)
+    response = urlopen(url).read().decode('utf-8')
+    data = json.loads(response)
+    data = data[0]
+
+    print('''
+    General Info for %s:
+        Planet Letter:                  %s
+        Host Star:                      %s
+        Discovery Method:               %s
+
+    Orbit Info for %s:
+        Orbit Period (E-Days):          %s
+        Orbit Semi-Major Axis (AU)      %s
+        Orbit Inclination:              %s
+
+    Planet Size Info for %s
+        Planet Mass (Unit: Jupiter):    %s
+        Planet Radius (Unit: Jupiter):  %s
+        Planet Density:                 %s
+
+    %s Location in sky:
+        Right Ascension:                %s
+        Declination:                    %s
+       ''' % (planet, data.get('pl_letter'), data.get('pl_hostname'), data.get('pl_discmethod'), planet, data.get('pl_orbper'), data.get('pl_orbsmax'), data.get('pl_orbincl'), planet, data.get('pl_bmassj'), data.get('pl_radj'), data.get('pl_dens'), planet, data.get('ra'), data.get('dec')))

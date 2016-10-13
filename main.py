@@ -20,7 +20,7 @@ print(raw_data)
 
 import sys
 import modules
-import click
+from prettytable import PrettyTable
 
 INTRO = '''
 Welcome to the Exo-planet Archive API search
@@ -32,21 +32,44 @@ def main():
     while True:
         MENU = '''
         1. Pre-defined search queries
-        2. QWizard
-        3. Advanced query
+        2. Advanced Menu
+        3. Planet Overview
+
         q. Quit
         '''
 
         MENU_d = {
             '1': modules.preDefined,
-            '2': modules.writeOwn,
-            '3': modules.writeAdv,
+            '2': menu_2,
+            '3': modules.planetOverview,
             'q': exit
         }
 
         print(MENU)
 
         func = input('_> ')
+
+        MENU_d.get(func)()
+
+def menu_2():
+
+        MENU = '''
+        1. QWizard
+        2. Advanced Query Writer (No help)
+
+        b. Main Menu
+        '''
+
+        MENU_d = {
+            '1': modules.writeOwn,
+            '2': modules.writeAdv,
+            'b': main,
+        }
+
+        print(MENU)
+
+        func = input('_> ')
+
         MENU_d.get(func)()
 
 
